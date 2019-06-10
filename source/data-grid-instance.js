@@ -3,7 +3,16 @@ const { generateData } = require("./data-grid-generate-data");
 
 const dataGridOptions = {
     dataSource: generateData(100000),
+    allowColumnReordering: true,
+    allowColumnResizing: true,
+    columnAutoWidth: true,
     showBorders: true,
+    columnChooser: {
+        enabled: true
+    },
+    columnFixing: { 
+        enabled: true
+    },
     customizeColumns: function (columns) {
         columns[0].width = 70;
     },
