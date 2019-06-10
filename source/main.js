@@ -1,92 +1,73 @@
-const DevExtremeThemes = require("devextreme/viz/themes")
-
-const str = rev("12314");
-
 var defaultScaleX = 1000;
 var defaultScaleY = 1000;
 
-
 var scaleX = defaultScaleX;
 var scaleY = defaultScaleY;
+
+window.visApi = () => ({ getSheetZoom() { return scaleX / 1000 * 100; } })
+
+function getZoomCorrection() { return window.visApi().getSheetZoom() / 100; }
+
+function getZoomCorrectionInvert() { return 1 / getZoomCorrection(); }
+
+var getBoundingClientRectOriginal = HTMLElement.prototype.getBoundingClientRect;
+
+HTMLElement.prototype.getBoundingClientRect = function () {
+  // debugger;
+  var res = getBoundingClientRectOriginal.call(this);
+  var result = {};
+  // return res;
+  for (prop in res)
+    result[prop] = getZoomCorrectionInvert() * res[prop];
+  //{"x":210.4375,"y":455,"width":537.5625,"height":50,"top":455,"right":748,"bottom":505,"left":210.4375}
+  return result;
+}
+
+const DevExtremeThemes = require("devextreme/viz/themes")
+const { pivotGrid } = require("./pivot-grid-instance");
+
+
 var delta = 50;
 var pausedState = true;
 var reversedState = false;
 
-window.setInterval(()=>{
-  if(pausedState) return;
-  $("#scaledContainer").css("transform", `scale(${scaleX/1000},${scaleY/1000})`);
-  if(reversedState)
-    {
-      scaleX++;scaleY++;
-    }
-  else
-    {
-      scaleX--;scaleY--;
-    }
+
+window.setInterval(() => {
+  if (pausedState) return;
+  $("#scaledContainer").css("transform", `scale(${scaleX / 1000},${scaleY / 1000})`);
+  if (reversedState) {
+    scaleX++; scaleY++;
+  }
+  else {
+    scaleX--; scaleY--;
+  }
 }, delta);
 
-$("#theButton").click(()=>{
-  $("#sales").dxPivotGrid("instance").updateDimensions();
+$("#theButton").click(() => {
+  pivotGrid.updateDimensions();
 });
 
-$("#startButton").click(()=>{
+$("#startButton").click(() => {
   pausedState = false;
 });
 
-$("#stopButton").click(()=>{
+$("#stopButton").click(() => {
   pausedState = true;
 });
 
-$("#reverseButton").click(()=>{
+$("#reverseButton").click(() => {
   reversedState = !reversedState;
 });
 
-$("#resetButton").click(()=>{
+$("#resetButton").click(() => {
   scaleX = defaultScaleX;
   scaleY = defaultScaleY;
   delta = 50;
   pausedState = true;
   reversedState = false;
-  $("#scaledContainer").css("transform", `scale(${scaleX/1000},${scaleY/1000})`);
-  window.setTimeout(()=>$("#sales").dxPivotGrid("instance").updateDimensions());
+  $("#scaledContainer").css("transform", `scale(${scaleX / 1000},${scaleY / 1000})`);
+  window.setTimeout(() => pivotGrid.updateDimensions());
 });
 
 DevExtremeThemes.currentTheme("generic.light");
-$(function(){
-    $("#sales").dxPivotGrid({
-        allowSortingBySummary: true,
-        allowSorting: true,
-        allowFiltering: true,
-        allowExpandAll: true,
-        //height: 570,
-        showBorders: true,
-        "export": {
-            enabled: true,
-            fileName: "Adventure Works"
-        },
-        fieldChooser: {
-            allowSearch: true
-        },
-        dataSource: {
-            fields: [
-                { dataField: "[Product].[Category]", area: "row" },
-                { 
-                    dataField: "[Product].[Subcategory]", 
-                    area: "row",
-                    headerFilter: {
-                        allowSearch: true
-                    } 
-                },
-                { dataField: "[Ship Date].[Calendar Year]", area: "column" },
-                { dataField: "[Ship Date].[Month of Year]", area: "column" },
-                { dataField: "[Measures].[Customer Count]", area: "data" }
-            ],
-            store: {
-                type: "xmla",
-                url: "https://demos.devexpress.com/Services/OLAP/msmdpump.dll",
-                catalog: "Adventure Works DW Standard Edition",
-                cube: "Adventure Works"
-            }
-        }
-    });
-});
+
