@@ -1,5 +1,13 @@
-var scaleX = 1000;
-var scaleY = 1000;
+const DevExtremeThemes = require("devextreme/viz/themes")
+
+const str = rev("12314");
+
+var defaultScaleX = 1000;
+var defaultScaleY = 1000;
+
+
+var scaleX = defaultScaleX;
+var scaleY = defaultScaleY;
 var delta = 50;
 var pausedState = true;
 var reversedState = false;
@@ -34,8 +42,8 @@ $("#reverseButton").click(()=>{
 });
 
 $("#resetButton").click(()=>{
-  scaleX = 1000;
-  scaleY = 1000;
+  scaleX = defaultScaleX;
+  scaleY = defaultScaleY;
   delta = 50;
   pausedState = true;
   reversedState = false;
@@ -43,7 +51,7 @@ $("#resetButton").click(()=>{
   window.setTimeout(()=>$("#sales").dxPivotGrid("instance").updateDimensions());
 });
 
-DevExpress.viz.currentTheme("generic.light");
+DevExtremeThemes.currentTheme("generic.light");
 $(function(){
     $("#sales").dxPivotGrid({
         allowSortingBySummary: true,
