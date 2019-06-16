@@ -10,18 +10,18 @@ function getZoomCorrection() { return window.visApi().getSheetZoom() / 100; }
 
 function getZoomCorrectionInvert() { return 1 / getZoomCorrection(); }
 
-var getBoundingClientRectOriginal = HTMLElement.prototype.getBoundingClientRect;
+// var getBoundingClientRectOriginal = HTMLElement.prototype.getBoundingClientRect;
 
-HTMLElement.prototype.getBoundingClientRect = function () {
-  // debugger;
-  var res = getBoundingClientRectOriginal.call(this);
-  var result = {};
-  // return res;
-  for (prop in res)
-    result[prop] = getZoomCorrectionInvert() * res[prop];
-  //{"x":210.4375,"y":455,"width":537.5625,"height":50,"top":455,"right":748,"bottom":505,"left":210.4375}
-  return result;
-}
+// HTMLElement.prototype.getBoundingClientRect = function () {
+//   // debugger;
+//   var res = getBoundingClientRectOriginal.call(this);
+//   var result = {};
+//   // return res;
+//   for (prop in res)
+//     result[prop] = getZoomCorrectionInvert() * res[prop];
+//   //{"x":210.4375,"y":455,"width":537.5625,"height":50,"top":455,"right":748,"bottom":505,"left":210.4375}
+//   return result;
+// }
 
 const DevExtremeThemes = require("devextreme/viz/themes")
 const { dataGrid } = require("./data-grid-instance");
@@ -35,6 +35,14 @@ var reversedState = false;
 window.setInterval(() => {
   if (pausedState) return;
   $("#scaledContainer").css("transform", `scale(${scaleX / 1000},${scaleY / 1000})`);
+  $("#widget").css("transform", `scale(${1000 / scaleX})`);
+  $("#sales").css("font-size", `${14*scaleX / 1000}px`);
+  dataGrid.option({ width: 800 * scaleX / 1000, height: 600 * scaleX / 1000 });
+  // $("#sales").css({ width: `${800 * scaleX / 1000}px`, height: `${600 * scaleX / 1000}px` });
+  // $("#foreignObject").attr("transform", `scale(${scaleX / 1000},${scaleY / 1000})`);
+  // $("#svgGroup").attr("transform", `scale(${scaleX / 1000},${scaleY / 1000})`);
+  // $("#scaledContainer").css("perspective", `${10*scaleX / 1000}px`);
+
   if (reversedState) {
     scaleX++; scaleY++;
   }

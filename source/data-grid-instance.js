@@ -20,7 +20,8 @@ const dataGridOptions = {
         enabled: true
     },
     scrolling: {
-        mode: "virtual"
+        mode: "virtual",
+        rowRenderingMode:"virtual",
     },
     sorting: {
         mode: "none"
